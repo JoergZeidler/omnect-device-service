@@ -1,5 +1,6 @@
 mod consent;
 mod factory_reset;
+mod logging;
 #[cfg(feature = "mock")]
 #[path = "mod_test.rs"]
 mod mod_test;
@@ -12,8 +13,9 @@ use super::update_validation;
 use crate::{
     systemd::WatchdogHandler,
     twin::{
-        consent::DeviceUpdateConsent, factory_reset::FactoryReset, network_status::NetworkStatus,
-        reboot::Reboot, ssh::Ssh, wifi_commissioning::WifiCommissioning,
+        consent::DeviceUpdateConsent, factory_reset::FactoryReset, logging::Logging,
+        network_status::NetworkStatus, reboot::Reboot, ssh::Ssh,
+        wifi_commissioning::WifiCommissioning,
     },
 };
 use anyhow::{anyhow, bail, Result};
@@ -47,6 +49,7 @@ enum TwinFeature {
     DeviceUpdateConsent,
     NetworkStatus,
     Ssh,
+    Logging,
 }
 
 #[async_trait(?Send)]
@@ -92,7 +95,7 @@ pub struct Twin {
 impl Twin {
     pub fn new(client: Box<dyn IotHub>) -> Self {
         let (tx_reported_properties, rx_reported_properties) = mpsc::channel(100);
-        
+
         Twin {
             iothub_client: client,
             tx_reported_properties: tx_reported_properties.clone(),
@@ -124,6 +127,10 @@ impl Twin {
                 (
                     TypeId::of::<WifiCommissioning>(),
                     Box::<WifiCommissioning>::default() as Box<dyn Feature>,
+                ),
+                (
+                    TypeId::of::<Logging>(),
+                    Box::<Logging>::default() as Box<dyn Feature>,
                 ),
             ]),
         }
@@ -261,6 +268,10 @@ impl Twin {
                         .update_include_network_filter(inf.as_array())
                         .await?;
                 }
+
+                if let Some(log) = desired.get("logging") {
+                    self.feature::<Logging>()?.control(log.as_str()).await?;
+                }
             }
             TwinUpdateState::Complete => {
                 if desired.get("desired").is_none() {
@@ -275,6 +286,10 @@ impl Twin {
                     .update_include_network_filter(
                         desired["desired"]["include_network_filter"].as_array(),
                     )
+                    .await?;
+
+                self.feature::<Logging>()?
+                    .control(desired["desired"]["logging"].as_str())
                     .await?;
             }
         }
