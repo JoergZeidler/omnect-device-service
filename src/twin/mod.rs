@@ -270,7 +270,9 @@ impl Twin {
                 }
 
                 if let Some(log) = desired.get("logging") {
-                    self.feature::<Logging>()?.control(log.as_str()).await?;
+                    self.feature::<Logging>()?
+                        .update_configuration(Some(log))
+                        .await?;
                 }
             }
             TwinUpdateState::Complete => {
@@ -289,7 +291,7 @@ impl Twin {
                     .await?;
 
                 self.feature::<Logging>()?
-                    .control(desired["desired"]["logging"].as_str())
+                    .update_configuration(Some(&desired["desired"]["logging"]))
                     .await?;
             }
         }
