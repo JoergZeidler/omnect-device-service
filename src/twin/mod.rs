@@ -14,9 +14,10 @@ use super::update_validation;
 use crate::systemd::WatchdogManager;
 use crate::twin::{
     consent::DeviceUpdateConsent, factory_reset::FactoryReset, modem_info::ModemInfo,
-    network_status::NetworkStatus, reboot::Reboot, ssh_tunnel::SshTunnel,
+    network_status::NetworkStatus, reboot::Reboot, ssh_tunnel::SshTunnel, web_service::WebService,
     wifi_commissioning::WifiCommissioning,
 };
+use anyhow::Context;
 use anyhow::{anyhow, bail, Result};
 use async_trait::async_trait;
 use azure_iot_sdk::client::*;
@@ -41,7 +42,6 @@ use tokio::{
     sync::mpsc,
     time::{interval, Duration, Interval},
 };
-use web_service::WebService;
 
 #[enum_dispatch]
 #[derive(EnumCountMacro)]
@@ -141,7 +141,7 @@ impl Twin {
         }
     }
 
-    pub async fn init(&mut self) -> Result<()> {
+    async fn init(&mut self) -> Result<()> {
         dotenvy::from_path_override(Path::new(&format!(
             "{}/os-release",
             std::env::var("OS_RELEASE_DIR_PATH").unwrap_or_else(|_| "/etc".to_string())
@@ -420,7 +420,7 @@ impl Twin {
     }
 }
 
-pub fn notify_some_interval(
+fn notify_some_interval(
     interval: &mut Option<Interval>,
 ) -> impl Future<Output = tokio::time::Instant> + '_ {
     match interval.as_mut() {
