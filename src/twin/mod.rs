@@ -17,7 +17,6 @@ use crate::twin::{
     network_status::NetworkStatus, reboot::Reboot, ssh_tunnel::SshTunnel, web_service::WebService,
     wifi_commissioning::WifiCommissioning,
 };
-use anyhow::Context;
 use anyhow::{anyhow, bail, Result};
 use async_trait::async_trait;
 use azure_iot_sdk::client::*;
