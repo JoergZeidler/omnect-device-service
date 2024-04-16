@@ -20,7 +20,7 @@ impl WebService {
         let srv = HttpServer::new(move || {
             let cors = Cors::default()
                 .allowed_origin(format!("http://{}:{}", "127.0.0.1", "8085").as_str())
-                .allowed_methods(vec!["GET", "POST"])
+                .allowed_methods(vec!["GET", "PUT"])
                 .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
                 .allowed_header(http::header::CONTENT_TYPE)
                 .max_age(3600);
