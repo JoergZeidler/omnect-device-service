@@ -231,10 +231,7 @@ pub mod mod_test {
             "testfiles/positive/consent_conf.json",
             "testfiles/positive/request_consent.json",
             "testfiles/positive/history_consent.json",
-            "testfiles/positive/factory-reset-status_succeeded",
         ];
-        let factory_reset_status_srv = format!("testfiles/positive/factory-reset-status_succeeded");
-        env::set_var("FACTORY_RESET_STATUS_PATH", factory_reset_status_srv);
 
         let expect = |mock: &mut MockMyIotHub| {
             mock.expect_twin_report()
@@ -670,10 +667,7 @@ pub mod mod_test {
             "testfiles/positive/consent_conf.json",
             "testfiles/positive/request_consent.json",
             "testfiles/positive/history_consent.json",
-            "testfiles/positive/factory-reset-status_succeeded",
         ];
-        let factory_reset_status_srv = format!("testfiles/positive/factory-reset-status_succeeded");
-        env::set_var("FACTORY_RESET_STATUS_PATH", factory_reset_status_srv);
 
         let expect = |mock: &mut MockMyIotHub| {
             mock.expect_twin_report()
@@ -727,10 +721,7 @@ pub mod mod_test {
             "testfiles/positive/consent_conf.json",
             "testfiles/positive/request_consent.json",
             "testfiles/positive/history_consent.json",
-            "testfiles/positive/factory-reset-status_succeeded",
         ];
-        let factory_reset_status_srv = format!("testfiles/positive/factory-reset-status_succeeded");
-        env::set_var("FACTORY_RESET_STATUS_PATH", factory_reset_status_srv);
 
         let test_dirs = vec!["testfiles/positive/test_component"];
 
@@ -766,10 +757,7 @@ pub mod mod_test {
             "testfiles/positive/consent_conf.json",
             "testfiles/positive/request_consent.json",
             "testfiles/positive/history_consent.json",
-            "testfiles/positive/factory-reset-status_succeeded",
         ];
-        let factory_reset_status_srv = format!("testfiles/positive/factory-reset-status_succeeded");
-        env::set_var("FACTORY_RESET_STATUS_PATH", factory_reset_status_srv);
 
         let test_dirs = vec!["testfiles/positive/test_component"];
 
@@ -1050,19 +1038,17 @@ pub mod mod_test {
 
     #[tokio::test(flavor = "multi_thread")]
     async fn factory_reset_unexpected_result_test() {
-        let test_files = vec![
-            "testfiles/positive/os-release",
-            "testfiles/negative/factory-reset-status_unexpected_factory_reset_format",
-        ];
+        let test_files = vec!["testfiles/positive/os-release"];
         let env_vars = vec![
             ("SUPPRESS_DEVICE_UPDATE_USER_CONSENT", "true"),
             ("SUPPRESS_SSH_TUNNEL", "true"),
             ("SUPPRESS_NETWORK_STATUS", "true"),
             ("SUPPRESS_REBOOT", "true"),
+            (
+                "TEST_FACTORY_RESET_RESULT",
+                "unexpected_factory_reset_result_format",
+            ),
         ];
-        let factory_reset_status_srv =
-            format!("testfiles/negative/factory-reset-status_unexpected_factory_reset_format");
-        env::set_var("FACTORY_RESET_STATUS_PATH", factory_reset_status_srv);
 
         let expect = |mock: &mut MockMyIotHub| {
             mock.expect_twin_report()
@@ -1079,19 +1065,17 @@ pub mod mod_test {
 
     #[tokio::test(flavor = "multi_thread")]
     async fn factory_reset_normal_result_test() {
-        let test_files = vec![
-            "testfiles/positive/os-release",
-            "testfiles/positive/factory-reset-status_normal_boot",
-        ];
+        let test_files = vec!["testfiles/positive/os-release"];
         let env_vars = vec![
             ("SUPPRESS_DEVICE_UPDATE_USER_CONSENT", "true"),
             ("SUPPRESS_SSH_TUNNEL", "true"),
             ("SUPPRESS_NETWORK_STATUS", "true"),
             ("SUPPRESS_REBOOT", "true"),
+            (
+                "TEST_FACTORY_RESET_RESULT",
+                "normal_boot_without_factory_reset",
+            ),
         ];
-        let factory_reset_status_srv =
-            format!("testfiles/positive/factory-reset-status_normal_boot");
-        env::set_var("FACTORY_RESET_STATUS_PATH", factory_reset_status_srv);
 
         let expect = |mock: &mut MockMyIotHub| {
             mock.expect_twin_report()
@@ -1108,19 +1092,17 @@ pub mod mod_test {
 
     #[tokio::test(flavor = "multi_thread")]
     async fn factory_reset_unexpected_setting_test() {
-        let test_files = vec![
-            "testfiles/positive/os-release",
-            "testfiles/positive/factory-reset-status_unexpected_reset_settings",
-        ];
+        let test_files = vec!["testfiles/positive/os-release"];
         let env_vars = vec![
             ("SUPPRESS_DEVICE_UPDATE_USER_CONSENT", "true"),
             ("SUPPRESS_SSH_TUNNEL", "true"),
             ("SUPPRESS_NETWORK_STATUS", "true"),
             ("SUPPRESS_REBOOT", "true"),
+            (
+                "TEST_FACTORY_RESET_RESULT",
+                "unexpected_restore_settings_error",
+            ),
         ];
-        let factory_reset_status_srv =
-            format!("testfiles/positive/factory-reset-status_unexpected_reset_settings");
-        env::set_var("FACTORY_RESET_STATUS_PATH", factory_reset_status_srv);
 
         let expect = |mock: &mut MockMyIotHub| {
             mock.expect_twin_report()
@@ -1158,19 +1140,14 @@ pub mod mod_test {
 
     #[tokio::test(flavor = "multi_thread")]
     async fn factory_reset_unexpected_type_test() {
-        let test_files = vec![
-            "testfiles/positive/os-release",
-            "testfiles/positive/factory-reset-status_unexpected_reset_type",
-        ];
+        let test_files = vec!["testfiles/positive/os-release"];
         let env_vars = vec![
             ("SUPPRESS_DEVICE_UPDATE_USER_CONSENT", "true"),
             ("SUPPRESS_SSH_TUNNEL", "true"),
             ("SUPPRESS_NETWORK_STATUS", "true"),
             ("SUPPRESS_REBOOT", "true"),
+            ("TEST_FACTORY_RESET_RESULT", "unexpected_factory_reset_type"),
         ];
-        let factory_reset_status_srv =
-            format!("testfiles/positive/factory-reset-status_unexpected_reset_type");
-        env::set_var("FACTORY_RESET_STATUS_PATH", factory_reset_status_srv);
 
         let expect = |mock: &mut MockMyIotHub| {
             mock.expect_twin_report()
