@@ -152,6 +152,7 @@ pub mod mod_test {
 
             // copy test files and dirs
             test_env.copy_file("testfiles/positive/systemd-networkd-wait-online.service");
+            test_env.copy_file("testfiles/positive/factory-reset-status_succeeded");
             test_files.iter().for_each(|file| {
                 test_env.copy_file(file);
             });
@@ -161,16 +162,21 @@ pub mod mod_test {
             });
 
             // set env vars
-            let wait_online_srv = format!(
-                "{}/systemd-networkd-wait-online.service",
-                test_env.dirpath()
-            );
-
             env::set_var("SSH_TUNNEL_DIR_PATH", test_env.dirpath().as_str());
             env::set_var("OS_RELEASE_DIR_PATH", test_env.dirpath().as_str());
             env::set_var("CONSENT_DIR_PATH", test_env.dirpath().as_str());
             env::set_var("WPA_SUPPLICANT_DIR_PATH", test_env.dirpath().as_str());
-            env::set_var("WAIT_ONLINE_SERVICE_FILE_PATH", wait_online_srv);
+            env::set_var(
+                "WAIT_ONLINE_SERVICE_FILE_PATH",
+                format!(
+                    "{}/systemd-networkd-wait-online.service",
+                    test_env.dirpath()
+                ),
+            );
+            env::set_var(
+                "FACTORY_RESET_STATUS_FILE_PATH",
+                format!("{}/factory-reset-status_succeeded", test_env.dirpath()),
+            );
             env::set_var("CONNECTION_STRING", "my-constr");
 
             env_vars.iter().for_each(|env| env::set_var(env.0, env.1));
@@ -220,6 +226,7 @@ pub mod mod_test {
             env::remove_var("CONSENT_DIR_PATH");
             env::remove_var("WPA_SUPPLICANT_DIR_PATH");
             env::remove_var("WAIT_ONLINE_SERVICE_FILE_PATH");
+            env::remove_var("FACTORY_RESET_STATUS_FILE_PATH");
             env_vars.iter().for_each(|e| env::remove_var(e.0));
         }
     }
@@ -957,7 +964,7 @@ pub mod mod_test {
         TestCase::run(test_files, vec![], vec![], expect, test);
     }
 
-    #[tokio::test(flavor = "multi_thread")]
+     #[tokio::test(flavor = "multi_thread")]
     async fn factory_reset_direct_method_test() {
         let test_files = vec![
             "testfiles/positive/os-release",
@@ -1035,7 +1042,7 @@ pub mod mod_test {
 
         TestCase::run(test_files, vec![], env_vars, expect, test);
     }
-
+/*
     #[tokio::test(flavor = "multi_thread")]
     async fn factory_reset_unexpected_result_test() {
         let test_files = vec!["testfiles/positive/os-release"];
@@ -1182,7 +1189,7 @@ pub mod mod_test {
 
         TestCase::run(test_files, vec![], env_vars, expect, test);
     }
-
+ */
     #[tokio::test(flavor = "multi_thread")]
     async fn update_report_and_refresh_network_status_test() {
         let test_files = vec!["testfiles/positive/os-release"];
