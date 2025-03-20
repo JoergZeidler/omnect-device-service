@@ -393,7 +393,7 @@ impl FirmwareUpdate {
         ensure!(
             std::process::Command::new("sudo")
                 .arg("-u")
-                .arg("root")
+                .arg("adu")
                 .arg("swupdate")
                 .arg("-v")
                 .arg("-i")
